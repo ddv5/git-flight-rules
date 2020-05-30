@@ -1,7 +1,7 @@
 # Flight rules for Git
 
 🌍
-*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)  ∙  [Tiếng Việt](README_vi.md) ∙ [Français](README_fr.md)*
+*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)  ∙  [Tiếng Việt](README_vi.md) ∙ [Français](README_fr.md) ∙ [日本語](README_ja.md)*
 
 #### What are "flight rules"?
 
@@ -30,7 +30,7 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [I set the wrong remote repository](#i-set-the-wrong-remote-repository)
     - [I want to add code to someone else's repository](#i-want-to-add-code-to-someone-elses-repository)
       - [Suggesting code via pull requests](#suggesting-code-via-pull-requests)
-      - [I need to update my fork with latest updates from original repository](#i-need-to-update-my-fork-with-latest-updates-from-original-repository)
+      - [I need to update my fork with latest updates from the original repository](#i-need-to-update-my-fork-with-latest-updates-from-the-original-repository)
   - [Editing Commits](#editing-commits)
     - [What did I just commit?](#what-did-i-just-commit)
     - [I wrote the wrong thing in a commit message](#i-wrote-the-wrong-thing-in-a-commit-message)
@@ -48,6 +48,8 @@ All commands should work for at least git version 2.13.0. See the [git website](
       - [Final Step: Pushing your changed repo history](#final-step-pushing-your-changed-repo-history)
     - [I need to change the content of a commit which is not my last](#i-need-to-change-the-content-of-a-commit-which-is-not-my-last)
   - [Staging](#staging)
+    - [I want to stage all tracked files and leave untracked files](#i-want-to-stage-all-tracked-files-and-leave-untracked-files)
+      - [To stage part of tracked files](#to-stage-part-of-tracked-files)
     - [I need to add staged changes to the previous commit](#i-need-to-add-staged-changes-to-the-previous-commit)
     - [I want to stage part of a new file, but not the whole file](#i-want-to-stage-part-of-a-new-file-but-not-the-whole-file)
     - [I want to add changes in one file to two different commits](#i-want-to-add-changes-in-one-file-to-two-different-commits)
@@ -98,6 +100,7 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [Stash specific files](#stash-specific-files)
     - [Stash with message](#stash-with-message)
     - [Apply a specific stash from list](#apply-a-specific-stash-from-list)
+    - [Stash while keeping unstaged edits](#stash-while-keeping-unstaged-edits)
   - [Finding](#finding)
     - [I want to find a string in any commit](#i-want-to-find-a-string-in-any-commit)
     - [I want to find by author/committer](#i-want-to-find-by-authorcommitter)
@@ -108,6 +111,7 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [Clone all submodules](#clone-all-submodules)
     - [Remove a submodule](#remove-a-submodule)
   - [Miscellaneous Objects](#miscellaneous-objects)
+    - [Copy a folder or file from one branch to another](#copy-a-folder-or-file-from-one-branch-to-another)
     - [Restore a deleted file](#restore-a-deleted-file)
     - [Delete tag](#delete-tag)
     - [Recover a deleted tag](#recover-a-deleted-tag)
@@ -153,13 +157,13 @@ To initialize an existing directory as a Git repository:
 
 ### I want to clone a remote repository
 
-To clone (copy) a remote repository, copy the url for the repository, and run:
+To clone (copy) a remote repository, copy the URL for the repository, and run:
 
 ```sh
 $ git clone [url]
 ```
 
-This will save it to a folder named the same as the remote repository's. Make sure you have connection to the remote server you are cloning from (for most purposes this means making sure you are connected to the internet).
+This will save it to a folder named the same as the remote repository's. Make sure you have a connection to the remote server you are cloning from (for most purposes this means making sure you are connected to the internet).
 
 To clone it into a folder with a different name than the default repository name:
 
@@ -173,7 +177,7 @@ There are a few possible problems here:
 
 If you cloned the wrong repository, simply delete the directory created after running `git clone` and clone the correct repository.
 
-If you set the wrong repository as the origin of an existing local repository, change the url of your origin by running:
+If you set the wrong repository as the origin of an existing local repository, change the URL of your origin by running:
 
 ```sh
 $ git remote set-url origin [url of the actual repo]
@@ -186,7 +190,7 @@ For more, see [this StackOverflow topic](https://stackoverflow.com/questions/243
 
 Git doesn't allow you to add code to someone else's repository without access rights. Neither does GitHub, which is not the same as Git, but rather a hosted service for Git repositories. However, you can suggest code using patches, or, on GitHub, forks and pull requests.
 
-First, a bit about forking. A fork is a copy of repository. It is not a git operation, but is a common action on GitHub, Bitbucket, GitLab — or anywhere people host Git repositories. You can fork a repository through the hosted UI.
+First, a bit about forking. A fork is a copy of a repository. It is not a git operation, but is a common action on GitHub, Bitbucket, GitLab — or anywhere people host Git repositories. You can fork a repository through the hosted UI.
 
 #### Suggesting code via pull requests
 
@@ -202,7 +206,7 @@ $ git clone https://github.com/k88hudson/git-flight-rules.git
 
 If you `cd` into the resulting directory, and type `git remote`, you'll see a list of the remotes. Normally there will be one remote - `origin` - which will point to `k88hudson/git-flight-rules`. In this case, we also want a remote that will point to your fork.
 
-First, to follow a Git convention, we normally use the remote name `origin` for your own repository, and `upstream` for whatever you've forked. So, rename the `origin` remote to `upstream`
+First, to follow a Git convention, we normally use the remote name `origin` for your own repository and `upstream` for whatever you've forked. So, rename the `origin` remote to `upstream`
 
 ```sh
 $ git remote rename origin upstream
@@ -229,11 +233,11 @@ When you've finished making whatever changes you like, push your changes (normal
 $ (feature/my-feature) git push --set-upstream origin feature/my-feature
 ```
 
-There is no way to suggest a pull request using the CLI using Git (although there are tools, like [hub](http://github.com/github/hub), which will do this for you). So, if you're ready to make a pull request, go to your GitHub (or other Git host) and create a new pull request. Note that your host automatically links the original and forked repositories.
+There is no way to suggest a pull request using the CLI using Git (although there are tools, like [hub](http://github.com/github/hub), which will do this for you). So, if you're ready to make a pull request, go to your GitHub (or another Git host) and create a new pull request. Note that your host automatically links the original and forked repositories.
 
 After all of this, do not forget to respond to any code review feedback.
 
-#### I need to update my fork with latest updates from original repository
+#### I need to update my fork with latest updates from the original repository
 
 After a while, the `upstream` repository may have been updated, and these updates need to be pulled into your `origin` repo. Remember that like you, other people are contributing too. Suppose that you are in your own feature branch and you need to update it with the original repository updates.
 
@@ -244,7 +248,7 @@ $ (master) git remote add upstream <link-to-original-repository>
 # $ (master) git remote add upstream git@github.com:k88hudson/git-flight-rules.git
 ```
 
-Now you can fetch from upstream and get the lastet updates.
+Now you can fetch from upstream and get the latest updates.
 
 ```sh
 $ (master) git fetch upstream
@@ -515,7 +519,7 @@ If this does not work, you will need to manually push the repo history in chunks
 ```sh
 (master)$ git push -u origin HEAD~<number>:refs/head/master --force
 ```
-Once the push operation succeeds the first time, decrease `<number>` gradually until a conventional `git push` succeeeds.
+Once the push operation succeeds the first time, decrease `<number>` gradually until a conventional `git push` succeeds.
 
 <a href="i-need-to-change-the-content-of-a-commit-which-is-not-my-last"></a>
 ### I need to change the content of a commit which is not my last
@@ -544,7 +548,7 @@ pick 4b6e19a The second to last commit
 pick f4037ec The last commit
 ```
 
-This tells rebase that you want to edit your third last commit and keep the other two unaltered. Then you'll save (and close) the editor. Git will then start to rebase. It stops on the commit you want to alter, giving you the chance to edit that commit. Now you can apply the changes which you missed applying when you initially commited that commit. You do so by editing and staging them. Afterwards you'll run
+This tells rebase that you want to edit your third last commit and keep the other two unaltered. Then you'll save (and close) the editor. Git will then start to rebase. It stops on the commit you want to alter, giving you the chance to edit that commit. Now you can apply the changes which you missed applying when you initially committed that commit. You do so by editing and staging them. Afterwards you'll run
 
 ```sh
 (your-branch)$ git commit --amend
@@ -559,6 +563,24 @@ which tells Git to recreate the commit, but to leave the commit message unedited
 will do the rest of the work for you.
 
 ## Staging
+
+<a href="#i-want-to-stage-all-tracked-files-and-leave-untracked-files"></a>
+
+### I want to stage all tracked files and leave untracked files
+
+```sh
+$ git add -u
+```
+
+#### To stage part of tracked files
+
+```sh
+# to stage files with ext .txt
+$ git add -u *.txt
+
+# to stage all files inside directory src
+$ git add -u src/
+```
 
 <a href="#i-need-to-add-staged-changes-to-the-previous-commit"></a>
 ### I need to add staged changes to the previous commit
@@ -605,14 +627,18 @@ Then, you will need to use the `e` option to manually choose which lines to add.
 <a href="unstaging-edits-and-staging-the-unstaged"></a>
 ### I want to stage my unstaged edits, and unstage my staged edits
 
-This is tricky. The best I figure is that you should stash your unstaged edits. Then, reset. After that, pop your stashed edits back, and add them.
+In many cases, you should unstage all of your staged files and then pick the file you want and commit it. However, if you want to switch the staged and unstaged edits, you can create a temporary commit to store your staged files, stage your unstaged files and then stash them. Then, reset the temporary commit and pop your stash.
 
 ```sh
-$ git stash -k
-$ git reset --hard
-$ git stash pop
-$ git add -A
+$ git commit -m "WIP"
+$ git add . # This will also add untracked files.
+$ git stash
+$ git reset HEAD^
+$ git stash pop --index 0
 ```
+
+NOTE 1: The reason to use `pop` here is want to keep idempotent as much as possible.
+NOTE 2: Your staged files will be marked as unstaged if you don't use the `--index` flag. ([This link](https://stackoverflow.com/questions/31595873/git-stash-with-staged-files-does-stash-convert-staged-files-to-unstaged?answertab=active#tab-top) explains why.)
 
 ## Unstaged Edits
 
@@ -1075,6 +1101,11 @@ To rename a different (local) branch:
 ```sh
 (master)$ git branch -m old-name new-name
 ```
+ To delete the `old-name` remote branch and push the `new-name` local branch:
+ 
+ ```sh
+ (master)$ git push origin :old_name new_name
+ ```
 
 <a name="i-want-to-checkout-to-a-remote-branch-that-someone-else-is-working-on"></a>
 ### I want to checkout to a remote branch that someone else is working on
@@ -1449,6 +1480,12 @@ $ git stash push working-directory-path/filename1.ext working-directory-path/fil
 $ git stash save <message>
 ```
 
+or
+
+```sh
+$ git stash push -m <message>
+```
+
 <a name="stash-apply-specific"></a>
 ### Apply a specific stash from list
 
@@ -1465,6 +1502,22 @@ $ git stash apply "stash@{n}"
 ```
 
 Here, 'n' indicates the position of the stash in the stack. The topmost stash will be position 0.
+
+Furthermore, using a time-based stash reference is also possible.
+
+```sh
+$ git stash apply "stash@{2.hours.ago}"
+```
+
+<a name="stage-and-keep-unstaged"></a>
+### Stash while keeping unstaged edits
+
+You can manually create a `stash commit`, and then use `git stash store`.
+
+```sh
+$ git stash create
+$ git stash store -m <message> CREATED_SHA1
+```
 
 ## Finding
 
@@ -1564,6 +1617,12 @@ $ rm -rf .git/modules/submodulename
 
 ## Miscellaneous Objects
 
+### Copy a folder or file from one branch to another
+
+```sh
+$ git checkout <branch-you-want-the-directory-from> -- <folder-name or file-name>
+```
+
 ### Restore a deleted file
 
 First find the commit when the file last existed:
@@ -1604,7 +1663,7 @@ Your tag should now have been restored.
 
 ### Deleted Patch
 
-If someone has sent you a pull request on GitHub, but then deleted their original fork, you will be unable to clone their repository or to use `git am` as the [.diff, .patch](https://github.com/blog/967-github-secrets) urls become unavailable. But you can checkout the PR itself using [GitHub's special refs](https://gist.github.com/piscisaureus/3342247). To fetch the content of PR#1 into a new branch called pr_1:
+If someone has sent you a pull request on GitHub, but then deleted their original fork, you will be unable to clone their repository or to use `git am` as the [.diff, .patch](https://github.com/blog/967-github-secrets) URLs become unavailable. But you can checkout the PR itself using [GitHub's special refs](https://gist.github.com/piscisaureus/3342247). To fetch the content of PR#1 into a new branch called pr_1:
 
 ```sh
 $ git fetch origin refs/pull/1/head:pr_1
@@ -1924,6 +1983,7 @@ function Squash-Commits {
 * [Learn Enough Git to Be Dangerous](https://www.learnenough.com/git-tutorial) - A book by Michael Hartl covering Git from basics
 * [Pro Git](https://git-scm.com/book/en/v2) - Scott Chacon and Ben Straub's excellent book about Git
 * [Git Internals](https://github.com/pluralsight/git-internals-pdf) - Scott Chacon's other excellent book about Git
+* [Nasa handbook](https://www.nasa.gov/sites/default/files/atoms/files/nasa_systems_engineering_handbook.pdf)
 
 ## Tutorials
 
